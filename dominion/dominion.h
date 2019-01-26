@@ -128,4 +128,32 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state);
 /* Set array position of each player who won (remember ties!) to
    1, others to 0 */
 
+void adventurerEffectOrig(int* drawntreasure, int currentPlayer, struct gameState *state,
+                      int temphand[], int* z);
+
+void adventurerEffectBug(int* drawntreasure, int currentPlayer, 
+                         struct gameState *state, int temphand[], int* z);
+
+void councilRoomEffectOrig(int currentPlayer, int handPos, struct gameState *state);
+
+void councilRoomEffectBug(int currentPlayer, int handPos, struct gameState *state);
+
+void smithyEffectOrig(int currentPlayer, int handPos, 
+                      struct gameState *state);
+
+void smithyEffectBug(int currentPlayer, int handPos, 
+                     struct gameState *state);
+
+void stewardEffectOrig(int choice1, int choice2, int choice3,
+                       int currentPlayer, int handPos, 
+                       struct gameState *state);
+
+void stewardEffectBug(int choice1, int choice2, int choice3,
+                       int currentPlayer, int handPos, 
+                       struct gameState *state);
+
+void villageEffectOrig(int currentPlayer, int handPos, struct gameState *state);
+
+void villageEffectBug(int currentPlayer, int handPos, struct gameState *state);
+
 #endif
