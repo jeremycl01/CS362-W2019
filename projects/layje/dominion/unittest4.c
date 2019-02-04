@@ -57,12 +57,11 @@ void intTests(){
 
 	int NUM_INTS = 7, i = -5, j = -5;
 
-	int intX[] = {INT_MIN, -7, -1, 0, 1, 7, INT_MAX};
-	int intY[] = {INT_MIN, -7, -1, 0, 1, 7, INT_MAX};	   
+	int ints[] = {INT_MIN, -7, -1, 0, 1, 7, INT_MAX};
 	
 	for (i = 0; i < NUM_INTS; i++){
 		for (j = 0; j < NUM_INTS; j++){
-			testReturn(intX[i], intY[j], compare(&(intX[i]), &(intY[j])));
+			testReturn(ints[i], ints[j], compare(&(ints[i]), &(ints[j])));
 		}
 	} 
 }
