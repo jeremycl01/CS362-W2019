@@ -269,8 +269,8 @@ void runTests(struct gameState* state){
 		displayAllHands(state);
 
 		//test that Smithy card is no longer in hand
-		printf("SMITHY CARD NO LONGER IN CURR PLAYER'S HAND\n");
-		if (smithyInHand(state, i)){
+		printf("SMITHY CARD REPLACED WITH ANOTHER CARD\n");
+		if (state -> hand[i][handPos[i]] == smithy){
 			printf("*****************FAILED****************\n\n");
 		}
 		else{

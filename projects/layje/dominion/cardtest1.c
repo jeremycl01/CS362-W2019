@@ -273,21 +273,11 @@ void runTests(struct gameState* state){
 		
 		displayAllHands(state);
 
-		//test that Village card is no longer in hand
-		printf("VILLAGE CARD NO LONGER IN CURR PLAYER'S HAND\n");
-		if (villageInHand(state, i)){
-			printf("*****************FAILED****************\n\n");
-		}
-		else{
-			printf("PASSED\n\n");
-		}
 
 		//test that Village has been replaced in the player's hand
 		printf("VILLAGE CARD REPLACED WITH ANOTHER CARD\n");
-		if (state -> handCount[i] != origState.handCount[i]){
+		if (state -> hand[i][handPos[i]] == village || state -> handCount[i] != origState.handCount[i]){
 			printf("*****************FAILED****************\n\n");
-			printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-				   origState.handCount[i], origState.handCount[i], state -> handCount[i]);
 		}
 		else{
 			printf("PASSED\n\n");

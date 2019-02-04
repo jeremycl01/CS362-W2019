@@ -47,6 +47,9 @@ cardtest1: cardtest1.c dominion.o rngs.o interface.o
 cardtest2: cardtest2.c dominion.o rngs.o interface.o
 	gcc -o cardtest2 -g  cardtest2.c dominion.o rngs.o interface.o $(CFLAGS)
 
+cardtest3: cardtest3.c dominion.o rngs.o interface.o
+	gcc -o cardtest3 -g  cardtest3.c dominion.o rngs.o interface.o $(CFLAGS)
+
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
