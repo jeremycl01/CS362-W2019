@@ -56,7 +56,42 @@ cardtest4: cardtest4.c dominion.o rngs.o interface.o
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
-all: playdom player 
+all: playdom player
+
+unittestresults: clean all unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4 
+	echo "********************************************************" > unittestresults.out
+	echo "Unit Test 1: isGameOver" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./unittest1 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Unit Test 2: updateCoins" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./unittest2 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Unit Test 3: getCost" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./unittest3 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Unit Test 4: compare" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./unittest4 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Card Test 1: Village" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./cardtest1 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Card Test 2: Smithy" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./cardtest2 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Card Test 3: Council Room" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./cardtest3 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "Card Test 4: Adventurer" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	./cardtest4 >> unittestresults.out
+
 
 clean:
 	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe 

@@ -484,13 +484,6 @@ void runTests(struct gameState *testState){
 	printf("SET LAST 4 SUPPLY CARDS TO 0, OTHERS UNCHANGED, GAME ENDS: ");
 	
 	fourZ(testState, maxVal - 3, maxVal - 2, maxVal - 1 , maxVal, 1);
-
-	//last 5 cards
-	printf("SET LAST 5 SUPPLY CARDS TO 0, OTHERS UNCHANGED, GAME ENDS: ");
-	
-	fiveZ(testState, maxVal - 4, maxVal - 3, maxVal - 2, maxVal - 1 , maxVal, 1);
-	
-
 }
 
 int main(){
