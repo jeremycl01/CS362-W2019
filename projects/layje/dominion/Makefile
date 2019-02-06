@@ -58,7 +58,9 @@ player: player.c interface.o
 
 all: playdom player
 
-unittestresults: clean all unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4 
+unittests: unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
+
+unittestresults: clean all unittests 
 	echo "********************************************************" > unittestresults.out
 	echo "Unit Test 1: isGameOver" >> unittestresults.out
 	echo "********************************************************" >> unittestresults.out
@@ -91,6 +93,11 @@ unittestresults: clean all unittest1 unittest2 unittest3 unittest4 cardtest1 car
 	echo "Card Test 4: Adventurer" >> unittestresults.out
 	echo "********************************************************" >> unittestresults.out
 	./cardtest4 >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	echo "COVERAGE SUMMARY" >> unittestresults.out
+	echo "********************************************************" >> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	cat dominion.c.gcov >> unittestresults.out
 
 
 clean:
