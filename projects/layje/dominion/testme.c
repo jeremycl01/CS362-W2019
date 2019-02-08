@@ -14,16 +14,14 @@ char inputChar()
 //generate a random string
 char *inputString()
 {
-    int NUM_CHARS = 20, i = -5;
+    int NUM_CHARS = 10, i = -5;
 
     static int first = 1, second = 1;
 
     static char strArr[6];
 
-    char charArr[] = {'a', 'c', 'd', 'e', 'f', 'h',
-                      'j', 'k', 'l', 'm', 'o',
-                      'r', 's', 't', 'u', 'v', 'x', 'y',
-                      'z', '\0'}; 
+    char charArr[] = {'c', 'e', 'f', 's', 't',
+                      'j', 'l', 'm', 'r', '\0'}; 
 
     if (!(first || second)){
         for (i = 0; i < 6; i++){
