@@ -1,8 +1,8 @@
 /* -----------------------------------------------------------------------
  * Jeremy Lay
  * CS 362-400-W19
- * Assignment 3 - Card Test 1 - Village
- * 2/4/19
+ * Assignment 4 - Random Test 1 - Village
+ * 2/25/19
  * -----------------------------------------------------------------------
  */
 
@@ -71,35 +71,40 @@ int stateChangedPlayerCards(struct gameState *origState, struct gameState *newSt
 //initialize test gameStruct
 void initTest(struct gameState* testState, int *numPlayers, int k[]){
 
-     *numPlayers = rand() % (MAX_PLAYERS + 1 - 2) + 2;
+    //randomly choose [2, MAX_PLAYERS] players
+    *numPlayers = rand() % (MAX_PLAYERS + 1 - 2) + 2;
 
+    //9 is always used as seed for repeatability
     initializeGame(*numPlayers, k, 9, testState);
 }
 
-//set player hands for testing
-//3 players are set to have same hands; position of village card is only difference
+
+
+//function to randomly set input player's test hand
 void setTestHands(struct gameState* state, int player, int villagePosArr[], int gameCards[]){
-	//set player 1's hand
-	int i = -5, numGameCards = 17;
-
 	
-	int handCount = (rand() % /*MAX_HAND*/ 100) + 1;
+	int i = -5, numGameCards = 17, MAX_TEST_HAND = 100;
 
+	//randomly select number of cards in hand
+	int handCount = (rand() % MAX_TEST_HAND) + 1;
 	state -> handCount[player] = handCount;
 
+	//randomly select index position of village card to be 
+	//played in random test
 	int villagePos = rand() % handCount;
-
 	state -> hand[player][villagePos] = village;
 
+	//store position of player's village card
 	villagePosArr[player] = villagePos;
 
+	//randomly select card for each of the other positions in 
+	//player's hand
 	for (i = 0; i < handCount; i++){
 		
 		if (i != villagePos){
 			state -> hand[player][i] = gameCards[rand() % numGameCards];
 		}
 	}
-
 }
 
 
@@ -133,15 +138,20 @@ int villageInHand(struct gameState* state, int player){
 }
 
 //boolean function determines whether Village is in the played cards pile
-int villageInPlayed(struct gameState* state){
+int villageInPlayed(struct gameState* origState, struct gameState* currState){
 
 	int i = 0;
 
-	for(i = 0; i < state -> playedCardCount; i++){
+	if (villageCount(currState -> playedCards, currState -> playedCardCount) - 
+		villageCount(origState -> playedCards, origState -> playedCardCount) == 1){
+		return 1;
+	}
+
+	/*for(i = 0; i < state -> playedCardCount; i++){
 		if (state -> playedCards[i] == village){
 			return 1;
 		}
-	}
+	} */
 	
 	return 0;
 }
@@ -282,7 +292,7 @@ void runTests(struct gameState* state, int villagePosArr[]){
 
 		//test that Village has been placed in the played cards pile
 		printf("VILLAGE CARD NOW IN PLAYER'S PLAYED CARDS PILE\n");
-		if (!villageInPlayed(state)){
+		if (!villageInPlayed(&origState, state)){
 			printf("*****************FAILED****************\n\n");
 		}
 		else{
@@ -370,7 +380,7 @@ int main(){
 		             village, minion, mine, cutpurse, sea_hag, tribute, 
 		             smithy};
 
-	int numPlayers = 0, i = -5, testNo = 0, NUM_TESTS = 30;
+	int numPlayers = 0, i = -5, testNo = 0, NUM_TESTS = 50;
 
 	printf("\nRANDOM CARD TEST 1: dominion.c - Village\n");
 	printf("**********************************\n\n");
@@ -391,15 +401,6 @@ int main(){
 		runTests(&testState, villagePosArr);
 
 	}
-
-	
-
-	
-
-	
-
-	
-	
 
 	return 0;
 }
