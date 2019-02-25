@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------
  * Jeremy Lay
  * CS 362-400-W19
- * Assignment 4 - Random Test 1 - Village
+ * Assignment 4 - Random Test 2 - Great Hall
  * 2/25/19
  * -----------------------------------------------------------------------
  */
@@ -81,7 +81,7 @@ void initTest(struct gameState* testState, int *numPlayers, int k[]){
 
 
 //function to randomly set input player's test hand
-void setTestHands(struct gameState* state, int player, int villagePosArr[]){
+void setTestHands(struct gameState* state, int player, int ghPosArr[]){
 	
 	int i = -5, numGameCards = 17, MAX_TEST_HAND = 100;
 
@@ -89,31 +89,31 @@ void setTestHands(struct gameState* state, int player, int villagePosArr[]){
 	int handCount = (rand() % MAX_TEST_HAND) + 1;
 	state -> handCount[player] = handCount;
 
-	//randomly select index position of village card to be 
+	//randomly select index position of Great Hall card to be 
 	//played in random test
-	int villagePos = rand() % handCount;
-	state -> hand[player][villagePos] = village;
+	int ghPos = rand() % handCount;
+	state -> hand[player][ghPos] = great_hall;
 
-	//store position of player's village card
-	villagePosArr[player] = villagePos;
+	//store position of player's Great Hall card
+	ghPosArr[player] = ghPos;
 
 	//randomly select card for each of the other positions in 
 	//player's hand
 	for (i = 0; i < handCount; i++){
 		
-		if (i != villagePos){
+		if (i != ghPos){
 			state -> hand[player][i] = (rand() % treasure_map) + 1;
 		}
 	}
 }
 
 
-int villageCount(int pile[], int pileSize){
+int ghCount(int pile[], int pileSize){
 
 	int i = -5, vils = 0;
 
 	for (i = 0; i < pileSize; i++){
-		if (pile[i] == village){
+		if (pile[i] == great_hall){
 			vils++;
 		}
 	}
@@ -123,13 +123,13 @@ int villageCount(int pile[], int pileSize){
 }
 
 
-//boolean function determines whether Village is in a player's hand
-int villageInHand(struct gameState* state, int player){
+//boolean function determines whether Great Hall is in a player's hand
+int ghInHand(struct gameState* state, int player){
 
 	int i = 0;
 
 	for(i = 0; i < state -> handCount[player]; i++){
-		if (state -> hand[player][i] == village){
+		if (state -> hand[player][i] == great_hall){
 			return 1;
 		}
 	}
@@ -137,14 +137,14 @@ int villageInHand(struct gameState* state, int player){
 	return 0;
 }
 
-//boolean function determines whether Village is in the played cards pile
-int villageInPlayed(struct gameState* origState, struct gameState* currState){
+//boolean function determines whether Great Hall is in the played cards pile
+int ghInPlayed(struct gameState* origState, struct gameState* currState){
 
-	if (villageCount(currState -> playedCards, currState -> playedCardCount) - 
-		villageCount(origState -> playedCards, origState -> playedCardCount) == 1){
+	if (ghCount(currState -> playedCards, currState -> playedCardCount) - 
+		ghCount(origState -> playedCards, origState -> playedCardCount) == 1){
 		return 1;
 	}
-
+	
 	return 0;
 }
 
@@ -234,12 +234,12 @@ int sameSupply(struct gameState* origState, struct gameState* state){
 	return 1;
 }
 
-//test Village. the expected effects are:
-//add 1 card to hand of player using Village from player's deck
-//add 2 action to player using Village
-//remove Village from hand of player using Village and place in played cards pile
+//test Great Hall. the expected effects are:
+//add 1 card to hand of player using Great Hall from player's deck
+//add 1 action to player using Great Hall
+//remove Great Hall from hand of player using Great Hall and place in played cards pile
 
-void runTests(struct gameState* state, int villagePosArr[]){
+void runTests(struct gameState* state, int ghPosArr[]){
 
 	int dummyInt = 1, i = -1, j=-1;
 
@@ -260,31 +260,31 @@ void runTests(struct gameState* state, int villagePosArr[]){
 		//to test effect on different number of actions
 		state -> numActions = i + 1;
 
-		//save state prior to cardEffect/village call
+		//save state prior to cardEffect/Great Hall call
 		struct gameState origState = *state;
 
-		printf("******TESTING PLAYER %d PLAYS VILLAGE*******\n\n", i + 1);
+		printf("******TESTING PLAYER %d PLAYS GREAT HALL*******\n\n", i + 1);
 
-		//call cardEffect with village
-		cardEffect(village, dummyInt, dummyInt, dummyInt, state, villagePosArr[i], &dummyInt);
+		//call cardEffect with Great Hall
+		cardEffect(great_hall, dummyInt, dummyInt, dummyInt, state, ghPosArr[i], &dummyInt);
 
-		printf("*******VILLAGE PLAYED*******\n\n");
+		printf("*******GREAT HALL PLAYED*******\n\n");
 		
 		displayAllHands(state);
 
 
-		//test that Village has been replaced in the player's hand
-		printf("VILLAGE CARD REPLACED WITH ANOTHER CARD\n");
-		if (state -> hand[i][villagePosArr[i]] == village || state -> handCount[i] != origState.handCount[i]){
+		//test that Great Hall has been replaced in the player's hand
+		printf("GREAT HALL CARD REPLACED WITH ANOTHER CARD\n");
+		if (state -> hand[i][ghPosArr[i]] == great_hall || state -> handCount[i] != origState.handCount[i]){
 			printf("*****************FAILED****************\n\n");
 		}
 		else{
 			printf("PASSED\n\n");
 		}
 
-		//test that Village has been placed in the played cards pile
-		printf("VILLAGE CARD NOW IN PLAYER'S PLAYED CARDS PILE\n");
-		if (!villageInPlayed(&origState, state)){
+		//test that Great Hall has been placed in the played cards pile
+		printf("GREAT HALL CARD NOW IN PLAYER'S PLAYED CARDS PILE\n");
+		if (!ghInPlayed(&origState, state)){
 			printf("*****************FAILED****************\n\n");
 		}
 		else{
@@ -303,10 +303,10 @@ void runTests(struct gameState* state, int villagePosArr[]){
 		}
 
 		//test that player's cards are the same except for the card
-		//that replaced Village
-		printf("PLAYER %d'S OTHER CARDS (ASIDE FROM VILLAGE/ADDED CARD) UNCHANGED\n", i + 1);
+		//that replaced Great Hall
+		printf("PLAYER %d'S OTHER CARDS (ASIDE FROM GREAT HALL/ADDED CARD) UNCHANGED\n", i + 1);
 
-				if (!sameCardsExPos(&origState, state, i, villagePosArr[i])){
+				if (!sameCardsExPos(&origState, state, i, ghPosArr[i])){
 					printf("*****************FAILED****************\n\n");
 				}
 				else{
@@ -323,7 +323,7 @@ void runTests(struct gameState* state, int villagePosArr[]){
 		}
 
 
-		//test that no ascpect of other players' game state has been changed by call to Village
+		//test that no ascpect of other players' game state has been changed by call to Great Hall
 		for (j = 0; j < state -> numPlayers; j++){
 			//don't run test for current player
 			if (j != i){
@@ -338,11 +338,11 @@ void runTests(struct gameState* state, int villagePosArr[]){
 			}
 		}
 
-		//test that 2 action have been added to curr player
+		//test that 1 action have been added to curr player
 		//NOTE: numActions is only stored in gameState for curr player
 		//therefore, no value to check for other players
-		printf("2 ACTION ADDED TO CURR PLAYER\n");
-		if (state -> numActions == (origState.numActions) + 2){
+		printf("1 ACTION ADDED TO CURR PLAYER\n");
+		if (state -> numActions == (origState.numActions) + 1){
 			printf("PASSED\n\n");
 		}
 		else{
@@ -366,18 +366,11 @@ int main(){
 	struct gameState testState;
 
 	int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
-           sea_hag, tribute, smithy};
-
-    /* int gameCards[17] = {curse, estate, duchy, province, copper, silver, gold, 
-		             adventurer, council_room, feast, gardens, mine, remodel,
-		             smithy, village, baron, great_hall, minion, steward, tribute
-		             smithy}; */
-
-		            
+           great_hall, tribute, smithy};
 
 	int numPlayers = 0, i = -5, testNo = 0, NUM_TESTS = 50;
 
-	printf("\nRANDOM CARD TEST 1: dominion.c - Village\n");
+	printf("\nRANDOM CARD TEST 1: dominion.c - Great Hall\n");
 	printf("**********************************\n\n");
 
 	for (testNo = 0; testNo < NUM_TESTS; testNo++){
@@ -387,13 +380,13 @@ int main(){
 
 		initTest(&testState, &numPlayers, k);
 
-		int villagePosArr[numPlayers];
+		int ghPosArr[numPlayers];
 
 		for (i = 0; i < numPlayers; i++){
-			setTestHands(&testState, i, villagePosArr);
+			setTestHands(&testState, i, ghPosArr);
 		}
 
-		runTests(&testState, villagePosArr);
+		runTests(&testState, ghPosArr);
 
 	}
 
