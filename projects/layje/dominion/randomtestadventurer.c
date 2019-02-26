@@ -502,7 +502,7 @@ int main(){
 
 	int numPlayers = -5, i = -5, testNo = 0;
 
-	int NUM_TESTS = 10;
+	int NUM_TESTS = 50;
 
 	int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
            sea_hag, tribute, smithy};
