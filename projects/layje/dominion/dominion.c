@@ -672,7 +672,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     {
     case adventurer:
       
-      adventurerEffectBug(&drawntreasure, currentPlayer, state, temphand, &z);
+      adventurerEffectOrig(&drawntreasure, currentPlayer, state, temphand, &z);
 
       return 0;
       

@@ -368,13 +368,6 @@ int main(){
 	int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
            sea_hag, tribute, smithy};
 
-    /* int gameCards[17] = {curse, estate, duchy, province, copper, silver, gold, 
-		             adventurer, council_room, feast, gardens, mine, remodel,
-		             smithy, village, baron, great_hall, minion, steward, tribute
-		             smithy}; */
-
-		            
-
 	int numPlayers = 0, i = -5, testNo = 0, NUM_TESTS = 50;
 
 	printf("\nRANDOM CARD TEST 1: dominion.c - Village\n");

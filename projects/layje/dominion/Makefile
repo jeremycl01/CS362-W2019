@@ -69,7 +69,7 @@ all: playdom player
 
 unittests: unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
 
-randomtests: randomtestcard1 randomtestcard2
+randomtests: randomtestcard1 randomtestcard2 randomtestadventurer
 
 unittestresults: clean all unittests 
 	echo "********************************************************" > unittestresults.out
@@ -119,6 +119,10 @@ randomtestresults: clean all randomtests
 	echo "Random Test 2: Great Hall" >> randomtestresults.out
 	echo "********************************************************" >> randomtestresults.out
 	./randomtestcard2 >> randomtestresults.out
+	echo "********************************************************" >> randomtestresults.out
+	echo "Random Test: Adventurer" >> randomtestresults.out
+	echo "********************************************************" >> randomtestresults.out
+	./randomtestadventurer >> randomtestresults.out
 	echo "********************************************************" >> randomtestresults.out
 	echo "COVERAGE SUMMARY" >> randomtestresults.out
 	echo "********************************************************" >> randomtestresults.out

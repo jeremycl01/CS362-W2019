@@ -1,8 +1,8 @@
 /* -----------------------------------------------------------------------
  * Jeremy Lay
  * CS 362-400-W19
- * Assignment 3 - Card Test 4 - Adventurer
- * 2/4/19
+ * Assignment 4 - Random Test - Adventurer
+ * 2/25/19
  * -----------------------------------------------------------------------
  */
 
@@ -10,7 +10,8 @@
 #include "interface.h"
 #include <limits.h>
 #include <string.h>
-
+#include <stdlib.h>
+#include <time.h>
 
 //checks the state variables for a players's cards to determine if there has been any change
 int stateChangedPlayerCards(struct gameState *origState, struct gameState *newState, int player){
@@ -64,65 +65,82 @@ int stateChangedPlayerCards(struct gameState *origState, struct gameState *newSt
 }
 
 
-
-
 //initialize test gameStruct
-void initTest(struct gameState* testState){
-	int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
-           sea_hag, tribute, smithy};
+void initTest(struct gameState* testState, int *numPlayers, int k[]){
 
-    initializeGame(3, k, 9, testState);
+    //randomly choose [2, MAX_PLAYERS] players
+    *numPlayers = rand() % (MAX_PLAYERS + 1 - 2) + 2;
+
+    //9 is always used as seed for repeatability
+    initializeGame(*numPlayers, k, 9, testState);
 }
 
-//set player hands for testing
-//3 players are set to have same hands; position of adventurer card is only difference
-void setTestHands(struct gameState* state){
-	//set player 1's hand
-	int player1 = 0, player2 = 1, player3 = 2, 
-	    i = -5, numCards = 9;
 
-	state -> hand[player1][0] = village;
-	state -> hand[player1][1] = estate;
-	state -> hand[player1][2] = copper;
-	state -> hand[player1][3] = silver;
-	state -> hand[player1][4] = gold;
-	state -> hand[player1][5] = adventurer;
-	state -> hand[player1][6] = province;
-	state -> hand[player1][7] = smithy;
-	state -> hand[player1][8] = council_room;
-
-	state -> handCount[player1] = numCards;
-
-	//player 2
-	state -> hand[player2][0] = adventurer;
-	state -> hand[player2][1] = estate;
-	state -> hand[player2][2] = copper;
-	state -> hand[player2][3] = silver;
-	state -> hand[player2][4] = gold;
-	state -> hand[player2][5] = village;
-	state -> hand[player2][6] = province;
-	state -> hand[player2][7] = smithy;
-	state -> hand[player2][8] = council_room;
-
-	//player 3
-	state -> hand[player3][0] = village;
-	state -> hand[player3][1] = estate;
-	state -> hand[player3][2] = copper;
-	state -> hand[player3][3] = silver;
-	state -> hand[player3][4] = gold;
-	state -> hand[player3][5] = council_room;
-	state -> hand[player3][6] = province;
-	state -> hand[player3][7] = smithy;
-	state -> hand[player3][8] = adventurer;
-
-
-	//set count for all players
-	for (i = 0; i < 3; i++){
-		state -> handCount[i] = numCards;
-	}
+//function to randomly set input player's test hand
+void setTestHands(struct gameState* state, int player, int advPosArr[]){
 	
+	int i = -5, MAX_TEST_HAND = 100;
 
+	//randomly select number of cards in hand
+	int handCount = (rand() % MAX_TEST_HAND) + 1;
+	state -> handCount[player] = handCount;
+
+	//randomly select index position of adventurer card to be 
+	//played in random test
+	int advPos = rand() % handCount;
+	state -> hand[player][advPos] = adventurer;
+
+	//store position of player's adventurer card
+	advPosArr[player] = advPos;
+
+	//randomly select card for each of the positions in 
+	//player's hand
+	for (i = 0; i < handCount; i++){
+		
+		if (i != advPos){
+			state -> hand[player][i] = (rand() % treasure_map) + 1;
+		}
+	}
 }
+
+
+//function to randomly set input player's test deck
+void setTestDeck(struct gameState* state, int player){
+	
+	int i = -5, MAX_TEST_DECK = 100;
+
+	//randomly make some decks empty to test call to shuffle function
+	if (rand() % 5 == 0){
+		state -> deckCount[player] = 0;
+
+		//randomly select discard count from [1,20]
+		int discardCount = (rand() % 20) + 1;
+
+		//fill discard pile with randomly chosen cards
+		for (i = 0; i < discardCount; i++){
+			state -> discard[player][i] = (rand() % treasure_map) + 1;
+		}
+
+		state -> discardCount[player] = discardCount;
+	}
+	else{
+
+		//randomly select number of cards in deck
+		int deckCount = (rand() % MAX_TEST_DECK) + 1;
+		state -> deckCount[player] = deckCount;
+
+		//randomly select card for each of the positions in 
+		//player's deck
+		for (i = 0; i < deckCount; i++){
+			
+			state -> deck[player][i] = (rand() % treasure_map) + 1;
+			
+		}
+	}
+}
+
+
+
 
 
 //boolean function to test if player has same cards aside from added cards between two states
@@ -184,8 +202,8 @@ int isTreasure(enum CARD cardIn){
 
 
 //set of individual tests run in every case
-void commonTests(struct gameState* origState, struct gameState* state, int handPos){
-	int player = 0, j = -5, addNum = 1;
+void commonTests(struct gameState* origState, struct gameState* state, int player, int handPos){
+	int j = -5, addNum = 1;
 
 	char name1[50], name2[50], name3[50];
 
@@ -230,10 +248,17 @@ void commonTests(struct gameState* origState, struct gameState* state, int handP
 
 	//test that the added cards are Treausure cards 
 	printf("LAST TWO CARDS ADDED TO HAND ARE TREASURE\n");
-	if (!( (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) &&
-	     (isTreasure(state -> hand[player][(state -> handCount[player]) - 2] || 
-	      isTreasure(state -> hand[player][handPos]))))) {
-		
+
+	if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) {
+		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])){
+			printf("PASSED\n\n");
+		}
+		else if (isTreasure(state -> hand[player][handPos])) {
+			printf("PASSED\n\n");
+		}
+	}
+	else{
+
 		cardNumToName(state -> hand[player][handPos], name3);
 		cardNumToName(state -> hand[player][(state -> handCount[player]) - 2], name2);
 		cardNumToName(state -> hand[player][(state -> handCount[player]) - 1], name1);
@@ -241,9 +266,7 @@ void commonTests(struct gameState* origState, struct gameState* state, int handP
 		printf("*****************FAILED****************\n\n");
 		printf("ADVENTURER POS CARD: %s PENULTIMATE CARD: %s LAST CARD: %s\n\n", 
 				name3, name2, name1);
-	}
-	else{
-		printf("PASSED\n\n");
+
 	}
 
 	//test that player's original cards are the same except for the card
@@ -283,6 +306,7 @@ void commonTests(struct gameState* origState, struct gameState* state, int handP
 }
 
 
+
 //display player's hand
 void displayHand(struct gameState* state, int player){
 
@@ -308,6 +332,7 @@ void displayHand(struct gameState* state, int player){
 	printf("\n\n");
 
 }
+
 
 
 //display player's deck
@@ -337,6 +362,7 @@ void displayDeck(struct gameState* state, int player){
 }
 
 
+
 //display player's discard pile
 void displayDiscard(struct gameState* state, int player){
 
@@ -364,18 +390,19 @@ void displayDiscard(struct gameState* state, int player){
 }
 
 
-//display, function call, and test activity common to all tests
-void commonAction(struct gameState* origState, struct gameState* state){
 
-	int player = 0, dummyInt = 0, handPos = 5;
+//display, function call, and test activity common to all tests
+void commonAction(struct gameState* origState, struct gameState* state, int player, int advPos){
+
+	int dummyInt = 0;
 
 	printf("BEFORE CALL: \n\n");
 	displayHand(state, player);
 	displayDeck(state, player);
 	displayDiscard(state, player);
 
-	//call cardEffect with village
-	cardEffect(adventurer, dummyInt, dummyInt, dummyInt, state, handPos, &dummyInt);
+	//call cardEffect with adventurer
+	cardEffect(adventurer, dummyInt, dummyInt, dummyInt, state, advPos, &dummyInt);
 
 	printf("*******ADVENTURER PLAYED*******\n\n");
 
@@ -383,337 +410,126 @@ void commonAction(struct gameState* origState, struct gameState* state){
 	displayDeck(state, player);
 	displayDiscard(state, player);
 
-	commonTests(origState, state, handPos);
+	//run validation tests
+	commonTests(origState, state, player, advPos);
 }
 
 
 
-//test 2 treasure cards at bottom of deck
-void test1(struct gameState* state){
+//function to get position of treasure cards that should be found
+//by Adventurer, i.e. first two treasure cards starting from
+//bottom of player's deck.  Also, returns number of cards that
+//will be discarded from deck
+int setTreasPos(struct gameState* state, int player, int* t1Pos, int* t2Pos){
 
-	int player = 0;
+	int i = (state -> deckCount[player]) - 1, discCt = 0; 
+
+	//if deck is not empty
+	if (state -> deckCount[player] > 0){
+
+		//find first treasure card
+		while (i >= 0 && (*t1Pos) < 0){
+
+			if (isTreasure(state -> deck[player][i--])){
+				*t1Pos = i;
+			}
+			//count each card until first treasure card found
+			else{
+				discCt++;
+			}
+		}
+
+		//find second treasure card
+		while (i >= 0 && (*t2Pos) < 0){
+
+			if (isTreasure(state -> deck[player][i--])){
+				*t2Pos = i;
+			}
+			//count each card until second treasure card found
+			else{
+				discCt++;
+			}
+		}
+	}
+
+	return discCt;
+}
+
+
+void runTests(struct gameState* state, int player, int advPos){
+
 
 	char name[50];
 
+	int t1Pos = -5, t2Pos = -5;
+
 	memset(name, '\0', 50 * sizeof(char));
 
-	printf("******TESTING PLAYER HAS 2 TREASURE CARDS AT LAST 2 DECK POS*******\n\n");
-
 	//set current player as having current turn
-	state -> whoseTurn = 0;
+	state -> whoseTurn = player;
 
-	//set deck
-	state -> deck[player][0] = duchy;
-	state -> deck[player][1] = province;
-	state -> deck[player][2] = steward;
-	state -> deck[player][3] = adventurer;
-	state -> deck[player][4] = council_room;
-	state -> deck[player][5] = village;
-	state -> deck[player][6] = smithy;
-	state -> deck[player][7] = sea_hag;
-	state -> deck[player][8] = silver;
-	state -> deck[player][9] = gold;
-
-	state -> deckCount[player] = 10;
+	int numToDiscard = setTreasPos(state, player, &t1Pos, &t2Pos);
 
 	//save state prior to cardEffect/village call
 	struct gameState origState = *state;
 
-	commonAction(&origState, state);
-	
-	//test number of cards from deck discarded
-	printf("NO CARD ADDED TO DISCARD (TREASURE CARDS ON TOP OF DECK)\n");
-	if (!(origState.discardCount[player] == state -> discardCount[player])){
-		printf("*****************FAILED****************\n\n");
-		printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-		   		origState.discardCount[player], origState.discardCount[player], 
-		   		state -> discardCount[player]);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
+	//run tests
+	commonAction(&origState, state, player, advPos);
 
-	//reset state
-	*state = origState;
+	//run test for number of cards discarded
+	if (t1Pos >= 0 && t2Pos >= 0){
 
+		//test number of cards from deck discarded
+		printf("%d DECK CARDS TO DISCARD\n", numToDiscard);
+		if (!(state -> discardCount[player] == numToDiscard)){
+			printf("*****************FAILED****************\n\n");
+			printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
+			   		origState.discardCount[player], 6, 
+			   		state -> discardCount[player]);
+		}
+		else{
+			printf("PASSED\n\n");
+		}
+	}
 }
 
 
 
-//test 2 treasure cards at top of deck
-void test2(struct gameState* state){
-
-	int player = 0;
-
-	char name[50];
-
-	memset(name, '\0', 50 * sizeof(char));
-
-	printf("******TESTING PLAYER HAS 2 TREASURE CARDS AT FIRST 2 DECK POS*******\n\n");
-
-	//set current player as having current turn
-	state -> whoseTurn = 0;
-
-	//set deck
-	state -> deck[player][0] = silver;
-	state -> deck[player][1] = gold;
-	state -> deck[player][2] = steward;
-	state -> deck[player][3] = adventurer;
-	state -> deck[player][4] = council_room;
-	state -> deck[player][5] = village;
-	state -> deck[player][6] = smithy;
-	state -> deck[player][7] = sea_hag;
-	state -> deck[player][8] = duchy;
-	state -> deck[player][9] = province;
-
-	state -> deckCount[player] = 10;
-
-	//save state prior to cardEffect/village call
-	struct gameState origState = *state;
-
-	commonAction(&origState, state);
-	
-	//test number of cards from deck discarded
-	printf("ALL DECK CARDS TO DISCARD EX TREASURE (TREASURE CARDS ON BOTTOM OF DECK)\n");
-	if (!(state -> discardCount[player] == 8)){
-		printf("*****************FAILED****************\n\n");
-		printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-		   		origState.discardCount[player], 8, 
-		   		state -> discardCount[player]);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
-
-	//reset state
-	*state = origState;
-
-}
-
-
-
-//test 2 treasure cards at 1 at top of deck, 1 at bottom
-void test3(struct gameState* state){
-
-	int player = 0;
-
-	char name[50];
-
-	memset(name, '\0', 50 * sizeof(char));
-
-	printf("******TESTING PLAYER HAS 1 TREASURE CARD DECK TOP 1 AT DECK BOTTOM*******\n\n");
-
-	//set current player as having current turn
-	state -> whoseTurn = 0;
-
-	//set deck
-	state -> deck[player][0] = silver;
-	state -> deck[player][1] = province;
-	state -> deck[player][2] = steward;
-	state -> deck[player][3] = adventurer;
-	state -> deck[player][4] = council_room;
-	state -> deck[player][5] = village;
-	state -> deck[player][6] = smithy;
-	state -> deck[player][7] = sea_hag;
-	state -> deck[player][8] = duchy;
-	state -> deck[player][9] = gold;
-
-	state -> deckCount[player] = 10;
-
-	//save state prior to cardEffect/village call
-	struct gameState origState = *state;
-
-	commonAction(&origState, state);
-
-	//test number of cards from deck discarded
-	printf("ALL DECK CARDS TO DISCARD EX TREASURE (TREASURE CARDS ON TOP/BOTTOM OF DECK)\n");
-	if (!(state -> discardCount[player] == 8)){
-		printf("*****************FAILED****************\n\n");
-		printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-		   		origState.discardCount[player], 8, 
-		   		state -> discardCount[player]);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
-
-	//reset state
-	*state = origState;
-
-}
-
-
-
-//2 treasure cards in middle of deck, side by side
-void test4(struct gameState* state){
-
-	int player = 0;
-
-	char name[50];
-
-	memset(name, '\0', 50 * sizeof(char));
-
-	printf("******TESTING PLAYER HAS 2 MID DECK SIDE BY SIDE*******\n\n");
-
-	//set current player as having current turn
-	state -> whoseTurn = 0;
-
-	//set deck
-	state -> deck[player][0] = village;
-	state -> deck[player][1] = province;
-	state -> deck[player][2] = steward;
-	state -> deck[player][3] = adventurer;
-	state -> deck[player][4] = gold;
-	state -> deck[player][5] = silver;
-	state -> deck[player][6] = smithy;
-	state -> deck[player][7] = sea_hag;
-	state -> deck[player][8] = duchy;
-	state -> deck[player][9] = council_room;
-
-	state -> deckCount[player] = 10;
-
-	//save state prior to cardEffect/village call
-	struct gameState origState = *state;
-
-	commonAction(&origState, state);
-	
-	//test number of cards from deck discarded
-	printf("4 DECK CARDS TO DISCARD\n");
-	if (!(state -> discardCount[player] == 4)){
-		printf("*****************FAILED****************\n\n");
-		printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-		   		origState.discardCount[player], 4, 
-		   		state -> discardCount[player]);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
-
-	//reset state
-	*state = origState;
-
-}
-
-
-//2 treasure cards in middle of deck, separated
-void test5(struct gameState* state){
-
-	int player = 0;
-
-	char name[50];
-
-	memset(name, '\0', 50 * sizeof(char));
-
-	printf("******TESTING PLAYER HAS 2 TREASURE CARDS MID DECK SEPARATED*******\n\n");
-
-	//set current player as having current turn
-	state -> whoseTurn = 0;
-
-	//set deck
-	state -> deck[player][0] = village;
-	state -> deck[player][1] = province;
-	state -> deck[player][2] = gold;
-	state -> deck[player][3] = adventurer;
-	state -> deck[player][4] = steward;
-	state -> deck[player][5] = sea_hag;
-	state -> deck[player][6] = smithy;
-	state -> deck[player][7] = silver;
-	state -> deck[player][8] = duchy;
-	state -> deck[player][9] = council_room;
-
-	state -> deckCount[player] = 10;
-
-	//save state prior to cardEffect/village call
-	struct gameState origState = *state;
-
-	commonAction(&origState, state);
-	
-	//test number of cards from deck discarded
-	printf("6 DECK CARDS TO DISCARD\n");
-	if (!(state -> discardCount[player] == 6)){
-		printf("*****************FAILED****************\n\n");
-		printf("ORIG COUNT: %d EXPECTED: %d  CURR COUNT: %d\n\n", 
-		   		origState.discardCount[player], 6, 
-		   		state -> discardCount[player]);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
-
-	//reset state
-	*state = origState;
-
-}
-
-//deck empty, separated
-void test6(struct gameState* state){
-
-	int player = 0;
-
-	char name[50];
-
-	memset(name, '\0', 50 * sizeof(char));
-
-	printf("******TESTING PLAYER HAS EMPTY DECK*******\n\n");
-
-	//set current player as having current turn
-	state -> whoseTurn = 0;
-
-	state -> deckCount[player] = 0;
-	
-	//set deck
-	state -> discard[player][0] = village;
-	state -> discard[player][1] = province;
-	state -> discard[player][2] = gold;
-	state -> discard[player][3] = adventurer;
-	state -> discard[player][4] = steward;
-	state -> discard[player][5] = sea_hag;
-	state -> discard[player][6] = smithy;
-	state -> discard[player][7] = silver;
-	state -> discard[player][8] = duchy;
-	state -> discard[player][9] = council_room;
-
-	state -> discardCount[player] = 10;
-
-	//save state prior to cardEffect/village call
-	struct gameState origState = *state;
-
-	commonAction(&origState, state);
-	
-	//reset state
-	*state = origState;
-
-}
 
 int main(){
 
 	struct gameState testState;
 
-	initTest(&testState);
+	int numPlayers = -5, i = -5, testNo = 0;
 
-	setTestHands(&testState);
+	int NUM_TESTS = 10;
 
-	printf("\nCARD TEST 4: dominion.c - Adventurer\n");
+	int k[10] = {adventurer, gardens, embargo, village, minion, mine, cutpurse,
+           sea_hag, tribute, smithy};
+
+    printf("\nRANDOM TEST: dominion.c - Adventurer\n");
 	printf("**********************************\n\n");
 
-	//2 treasure cards at bottom of deck
-	test1(&testState);
+    for (testNo = 0; testNo < NUM_TESTS; testNo++){
 
-	//2 treasure cards at top of deck
-	test2(&testState);
+    	printf("TEST %d\n", testNo + 1);
+		printf("**********************************\n\n");
 
-	//1 treasure cards at top of deck, 1 at bottom
-	test3(&testState);
+		initTest(&testState, &numPlayers, k);
 
-	//2 treasure cards in middle of deck, side by side
-	test4(&testState);
+		int advPosArr[numPlayers];
 
-	//2 treasure cards in middle of deck, separated
-	test5(&testState);
+		for (i = 0; i < numPlayers; i++){
+			setTestHands(&testState, i, advPosArr);
+			setTestDeck(&testState, i);
+		}
 
-	//deck empty
-	test6(&testState);
-	
+		for (i = 0; i < numPlayers; i++){
+			printf("PLAYER %d\n", i + 1);
+			printf("**********************************\n\n");
+			runTests(&testState, i, advPosArr[i]);
+		}
+    }
 
 	return 0;
 }
