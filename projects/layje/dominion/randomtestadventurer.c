@@ -110,7 +110,7 @@ void setTestDeck(struct gameState* state, int player){
 	int i = -5, MAX_TEST_DECK = 100;
 
 	//randomly make some decks empty to test call to shuffle function
-	if (rand() % 5 == 0){
+	if (rand() % 10 == 0){
 		state -> deckCount[player] = 0;
 
 		//randomly select discard count from [1,20]

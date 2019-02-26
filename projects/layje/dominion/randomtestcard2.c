@@ -83,7 +83,7 @@ void initTest(struct gameState* testState, int *numPlayers, int k[]){
 //function to randomly set input player's test hand
 void setTestHands(struct gameState* state, int player, int ghPosArr[]){
 	
-	int i = -5, numGameCards = 17, MAX_TEST_HAND = 100;
+	int i = -5, MAX_TEST_HAND = 100;
 
 	//randomly select number of cards in hand
 	int handCount = (rand() % MAX_TEST_HAND) + 1;
