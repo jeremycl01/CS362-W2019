@@ -111,23 +111,35 @@ unittestresults: clean all unittests
 	cat dominion.c.gcov >> unittestresults.out
 
 randomtestresults: clean all randomtests
-	echo "********************************************************" > randomtestresults.out
-	echo "Random Test 1: Village" >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	./randomtestcard1 >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	echo "Random Test 2: Great Hall" >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	./randomtestcard2 >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	echo "Random Test: Adventurer" >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	./randomtestadventurer >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	echo "COVERAGE SUMMARY" >> randomtestresults.out
-	echo "********************************************************" >> randomtestresults.out
-	gcov -b dominion.c >> randomtestresults.out
-	cat dominion.c.gcov >> randomtestresults.out
+	echo "********************************************************" > randomtestcard1.out
+	echo "Random Test 1: Village" >> randomtestcard1.out
+	echo "********************************************************" >> randomtestcard1.out
+	./randomtestcard1 >> randomtestcard1.out
+	echo "********************************************************" > randomtestcard2.out
+	echo "Random Test 2: Great Hall" >> randomtestcard2.out
+	echo "********************************************************" >> randomtestcard2.out
+	./randomtestcard2 >> randomtestcard2.out
+	echo "********************************************************" > randomtestadventurer.out
+	echo "Random Test: Adventurer" >> randomtestadventurer.out
+	echo "********************************************************" >> randomtestadventurer.out
+	./randomtestadventurer >> randomtestadventurer.out
+	echo "********************************************************" >> randomtestcard1.out
+	echo "COVERAGE SUMMARY" >> randomtestcard1.out
+	echo "********************************************************" >> randomtestcard1.out
+	echo "********************************************************" >> randomtestcard2.out
+	echo "COVERAGE SUMMARY" >> randomtestcard2.out
+	echo "********************************************************" >> randomtestcard2.out
+	echo "********************************************************" >> randomtestadventurer.out
+	echo "COVERAGE SUMMARY" >> randomtestadventurer.out
+	echo "********************************************************" >> randomtestadventurer.out
+	gcov -b dominion.c > gcovresults.out
+	cat gcovresults.out >> randomtestcard1.out
+	cat gcovresults.out >> randomtestcard2.out
+	cat gcovresults.out >> randomtestadventurer.out
+	cat dominion.c.gcov >> randomtestcard1.out
+	cat dominion.c.gcov >> randomtestcard2.out
+	cat dominion.c.gcov >> randomtestadventurer.out
+	rm -f gcovresults.out
 
 
 clean:

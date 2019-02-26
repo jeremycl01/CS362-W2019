@@ -4,6 +4,6 @@ run:
 
 	make randomtestresults
 
-to compile and run all random tests and gcov.
+to compile and run all random tests and gcov and produce output reports.
 
-Results are output to randomtestresults.out.
+
