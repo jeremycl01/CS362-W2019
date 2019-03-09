@@ -257,6 +257,14 @@ void commonTests(struct gameState* origState, struct gameState* state, int playe
 			printf("PASSED\n\n");
 		}
 	}
+	else if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])) {
+		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])){
+			printf("PASSED\n\n");
+		}
+		else if (isTreasure(state -> hand[player][handPos])) {
+			printf("PASSED\n\n");
+		}
+	}
 	else{
 
 		cardNumToName(state -> hand[player][handPos], name3);

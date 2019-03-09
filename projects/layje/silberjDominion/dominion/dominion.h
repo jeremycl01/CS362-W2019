@@ -130,7 +130,7 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state);
 
 // TEST FUNCTIONS
 
-void adventurerTest(struct gameState *state);
+void adventurerTest(struct gameState *state, int);
 void council_roomTest(struct gameState *state, int handPos);
 void smithyTest(struct gameState *state, int handPos);
 void villageTest(struct gameState *state, int handPos);

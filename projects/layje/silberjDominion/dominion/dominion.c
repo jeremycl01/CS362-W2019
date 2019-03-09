@@ -399,7 +399,7 @@ int isGameOver(struct gameState *state) {
 
   //if three supply pile are at 0, the game ends
   j = 0;
-  for (i = 0; i < 25; i++)
+  for (i = 0; i < 27; i++) //DEBUG - change from 25 to 27 per Assignment 5 report
     {
       if (state->supplyCount[i] == 0)
 	{
@@ -668,7 +668,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     {
 	
     case adventurer:
-		adventurerTest(state);
+		adventurerTest(state, handPos);
 		return 0;
 			
     case council_room:
@@ -1236,7 +1236,7 @@ int updateCoins(int player, struct gameState *state, int bonus)
 
 // TEST FUNCTIONS
 
-void adventurerTest(struct gameState *state)
+void adventurerTest(struct gameState *state, int handPos)
 {
 	int currentPlayer = whoseTurn(state);	
 	int temphand[MAX_HAND]; // moved above the if statement
@@ -1246,10 +1246,10 @@ void adventurerTest(struct gameState *state)
 
 	while(drawntreasure < 2)
 	{
-		if (state->deckCount[currentPlayer] < 1)
+		/*if (state->deckCount[currentPlayer] < 1)
 		{//if the deck is empty we need to shuffle discard and add to deck
 			shuffle(currentPlayer, state);
-		}
+		} */
 		
 		drawCard(currentPlayer, state);
 		cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer] - 1];//top card of hand is most recently drawn card.
@@ -1265,11 +1265,18 @@ void adventurerTest(struct gameState *state)
 		}
 	}
 	
-	while(z - 1 >= -1) //// BUG SEG FAULT POTENTIAL -1 (original 0) ////
+	while(z - 1 >= 0) //// DEBUG CHANGE >= -1 to >= 0 ////
 	{
 		state->discard[currentPlayer][state->discardCount[currentPlayer]++] = temphand[z - 1]; // discard all cards in play that have been drawn
 		z = z - 1;
 	}
+
+  state -> hand[currentPlayer][handPos] = state -> hand[currentPlayer][state -> handCount[currentPlayer] - 1];
+  state -> handCount[currentPlayer]--;
+  state -> playedCards[state -> playedCardCount] = adventurer;
+  state -> playedCardCount++;
+
+  //discardCard(handPos, currentPlayer, state, 0); //DEBUG - remove adventurer from hand
 	
 }
 
@@ -1280,7 +1287,7 @@ void council_roomTest(struct gameState *state, int handPos)
 	int i;	  
 	int currentPlayer = whoseTurn(state);  
 	  
-	for (i = 0; i < 5; i++) //// BUG - +5 Cards drawn (original +4). ////
+	for (i = 0; i < 4; i++) //// DEBUG - +5 Cards drawn changed to +4 per Assign 5 Report. ////
 	{
 		drawCard(currentPlayer, state);
 	}
@@ -1315,7 +1322,7 @@ void smithyTest(struct gameState *state, int handPos)
 	}
 		
 	//discard card from hand
-	discardCard(handPos, currentPlayer, state, 1); //// BUG - Trash flag set  (original 0 - unset) ////
+	discardCard(handPos, currentPlayer, state, 0); //// DEBUG - Trash flag set to 0 per Assign 5 report  ////
 	
 }
 
@@ -1328,7 +1335,7 @@ void villageTest(struct gameState *state, int handPos)
 	drawCard(currentPlayer, state);
 	
 	//+2 Actions
-	state->numActions = state->numActions + 3; //// BUG - +3 action (original +2) ////
+	state->numActions = state->numActions + 2; //// DEBUG - change +3 action to  +2 per Assign 5 report ////
 		
 	//discard played card from hand
 	discardCard(handPos, currentPlayer, state, 0);

@@ -249,7 +249,15 @@ void commonTests(struct gameState* origState, struct gameState* state, int playe
 	//test that the added cards are Treausure cards 
 	printf("LAST TWO CARDS ADDED TO HAND ARE TREASURE\n");
 
-	if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) {
+	if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])) {
+		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])){
+			printf("PASSED\n\n");
+		}
+		else if (isTreasure(state -> hand[player][handPos])) {
+			printf("PASSED\n\n");
+		}
+	}
+	else if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) {
 		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])){
 			printf("PASSED\n\n");
 		}

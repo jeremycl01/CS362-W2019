@@ -230,10 +230,24 @@ void commonTests(struct gameState* origState, struct gameState* state, int handP
 
 	//test that the added cards are Treausure cards 
 	printf("LAST TWO CARDS ADDED TO HAND ARE TREASURE\n");
-	if (!( (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) &&
-	     (isTreasure(state -> hand[player][(state -> handCount[player]) - 2] || 
-	      isTreasure(state -> hand[player][handPos]))))) {
-		
+	if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])) {
+		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])){
+			printf("PASSED\n\n");
+		}
+		else if (isTreasure(state -> hand[player][handPos])) {
+			printf("PASSED\n\n");
+		}
+	}
+	else if (isTreasure(state -> hand[player][(state -> handCount[player]) - 1])) {
+		if (isTreasure(state -> hand[player][(state -> handCount[player]) - 2])){
+			printf("PASSED\n\n");
+		}
+		else if (isTreasure(state -> hand[player][handPos])) {
+			printf("PASSED\n\n");
+		}
+	}
+	else{
+
 		cardNumToName(state -> hand[player][handPos], name3);
 		cardNumToName(state -> hand[player][(state -> handCount[player]) - 2], name2);
 		cardNumToName(state -> hand[player][(state -> handCount[player]) - 1], name1);
@@ -241,11 +255,8 @@ void commonTests(struct gameState* origState, struct gameState* state, int handP
 		printf("*****************FAILED****************\n\n");
 		printf("ADVENTURER POS CARD: %s PENULTIMATE CARD: %s LAST CARD: %s\n\n", 
 				name3, name2, name1);
-	}
-	else{
-		printf("PASSED\n\n");
-	}
 
+	}
 	//test that player's original cards are the same except for the card
 	//that replaced Adventuer
 	printf("PLAYER'S OTHER CARDS (ASIDE FROM ADVENTURER/ADDED CARDS) UNCHANGED\n");
