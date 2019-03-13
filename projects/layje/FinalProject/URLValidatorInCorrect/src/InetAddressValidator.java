@@ -104,7 +104,7 @@ public class InetAddressValidator implements Serializable {
             }
 
             if (iIpSegment > IPV4_MAX_OCTET_VALUE) {
-            		return true;
+            		return false;
             }
 
             if (ipSegment.length() > 1 && ipSegment.startsWith("0")) {

@@ -35,9 +35,210 @@ public class UrlValidatorTest extends TestCase {
    
    public void testIsValid()
    {
-	   //You can use this function for programming based testing
+	   	ResultPair[] scheme = {new ResultPair("http://", true),
+							   new ResultPair("https://", true),
+							   new ResultPair("ftp://", true),
+							   new ResultPair("mailto://", true),
+							   new ResultPair("data://", true),
+							   new ResultPair("irc://", true),
+							   new ResultPair("http:/", false),
+							   new ResultPair("http:", false),
+							   new ResultPair("http/", false),
+							   new ResultPair("http:\\", false),
+							   new ResultPair("http\\", false),
+							   new ResultPair("://", false)};
+		
+		ResultPair[] authority = {new ResultPair("0.0.0.0", true),
+								  new ResultPair("255.com", true),
+								  new ResultPair("255.255.255.255", true),
+								  new ResultPair("256.256.256.256", false),
+								  new ResultPair("go.au", true),										
+								  new ResultPair("go.auto", true),
+								  new ResultPair("1.2.3", false),
+								  new ResultPair("1.2.3.4.", false),
+								  new ResultPair(".1.2.3.4", false),
+								  new ResultPair("1.2.3.4.5", false),
+								  new ResultPair("go.a", false),
+								  new ResultPair("go.a1b", false),
+								  new ResultPair("go.1ab", false),
+								  new ResultPair("abc.", false),
+								  new ResultPair(".abc", false),
+								  new ResultPair("abc", false),
+								  new ResultPair("", false)};
+	
+		ResultPair[] port = {new ResultPair(":80", true),
+							 new ResultPair(":0", true),
+							 new ResultPair("", true),
+							 new ResultPair(":65535", true),
+							 new ResultPair(":65536", false),
+							 new ResultPair(":655aa", false),
+							 new ResultPair(":-1", false),
+							 new ResultPair(":999999999999999999", false)};
+		
+		ResultPair[] path = {new ResultPair("/testing", true),
+							 new ResultPair("/testing/", true),
+							 new ResultPair("/$1234", true),
+							 new ResultPair("/test1234", true),
+							 new ResultPair("/$1234/file", true),
+							 new ResultPair("/testing/file", true),
+							 new ResultPair("/test1234/file", true),
+							 new ResultPair("", true),
+							 // new ResultPair("//", true),
+							 new ResultPair("/..", false),
+							 new ResultPair("/../", false),
+							 new ResultPair("/../file", false),
+							 new ResultPair("/..//file", false),
+							 new ResultPair("/testing//file", false)};
 
-   }
+		ResultPair[] query = {new ResultPair("?key1=value1", true),
+							  new ResultPair("?key1=value1&key2=value2", true),									
+							  new ResultPair("", true),
+							  new ResultPair("//", false),
+							  new ResultPair("//key1=value1", false),
+							  new ResultPair("//key1=value1&key2=value2", false)};		
+
+		boolean[] testSchemeValid = {true, true, true, true, true, true, false, false, false, false, false, false};
+		boolean[] testAuthorityValid = {true, true, true, false, true, true, false, false, false, false, false, false, false, false, false, false, false};
+		boolean[] testPortValid = {true, true, true, true, false, false, false, false};
+		boolean[] testPathValid = {true, true, true, true, true, true, true, true, false, false, false, false, false};
+		boolean[] testQueryValid = {true, true, true, false, false, false};
+		
+		boolean newResult = true;
+		int bugTracker = 0;
+
+		for(int index = 0; index < scheme.length; index++)
+			if(testSchemeValid[index] != scheme[index].valid)
+				newResult = false;
+		for(int index = 0; index < authority.length; index++)
+			if(testAuthorityValid[index] != authority[index].valid)
+				newResult = false;	
+		for(int index = 0; index < port.length; index++)
+			if(testPortValid[index] != port[index].valid)
+				newResult = false;	
+		for(int index = 0; index < path.length; index++)
+			if(testPathValid[index] != path[index].valid)
+				newResult = false;
+		for(int index = 0; index < query.length; index++)
+			if(testQueryValid[index] != query[index].valid)
+				newResult = false;
+
+		if(newResult == false)
+		{
+			System.out.println("---------------- Bug Tracked ----------------");
+			System.out.println("ResultPair valid storage error.");
+			System.out.println("-------------------- End --------------------");
+			bugTracker++;
+		}
+		else
+			System.out.println("SUCCESS: ResultPair valid storage success.");
+
+		boolean oneFalse = false;
+	
+		UrlValidator urlValidator = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);	
+		
+		for (int oneIndex = 0; oneIndex < scheme.length; oneIndex++) 
+		{
+			ResultPair[] schemePart = (ResultPair[]) scheme;	
+
+			for (int twoIndex = 0; twoIndex < authority.length; twoIndex++) 
+			{
+				ResultPair[] authorityPart = (ResultPair[]) authority;
+				
+				for (int threeIndex = 0; threeIndex < port.length; threeIndex++) 
+				{
+					ResultPair[] portPart = (ResultPair[]) port;
+
+					for (int fourIndex = 0; fourIndex < path.length; fourIndex++) 
+					{
+						ResultPair[] pathPart = (ResultPair[]) path;
+
+						for (int fiveIndex = 0; fiveIndex < query.length; fiveIndex++)
+						{
+							ResultPair[] queryPart = (ResultPair[]) query;
+							
+							boolean notOneFalseFlag = false;
+							boolean expected = true;
+							
+							int totalFalse = 0;
+							if(schemePart[oneIndex].valid == false)
+								totalFalse++;
+							if(authorityPart[twoIndex].valid == false)
+								totalFalse++;
+							if(portPart[threeIndex].valid == false)
+								totalFalse++;
+							if(pathPart[fourIndex].valid == false)
+								totalFalse++;
+							if(queryPart[fiveIndex].valid == false)
+								totalFalse++;
+							
+							if(totalFalse > 0)
+								expected = false;
+							
+							if(oneFalse == true)
+								if(totalFalse != 1)
+									notOneFalseFlag = true;
+
+							StringBuilder compositeString = new StringBuilder();
+							
+							compositeString.append(schemePart[oneIndex].item);
+							compositeString.append(authorityPart[twoIndex].item);
+							compositeString.append(portPart[threeIndex].item);
+							compositeString.append(pathPart[fourIndex].item);
+							compositeString.append(queryPart[fiveIndex].item);
+														
+							String url = compositeString.toString();
+							
+							try 
+							{
+								boolean result = urlValidator.isValid(url);	
+								
+								if(expected != result && notOneFalseFlag == false)
+								{
+									System.out.println("---------------- Bug Tracked ----------------");
+									System.out.println("Result: " + result);
+									System.out.println("Expected: " + expected);
+									System.out.println("URL: " + url);
+									System.out.println("valid: " + schemePart[oneIndex].valid + "	scheme: " + schemePart[oneIndex].item);
+									System.out.println("valid: " + authorityPart[twoIndex].valid + "	host: " + authorityPart[twoIndex].item);
+									System.out.println("valid: " + portPart[threeIndex].valid + "	port: " + portPart[threeIndex].item);
+									System.out.println("valid: " + pathPart[fourIndex].valid + "	path: " + pathPart[fourIndex].item);
+									System.out.println("valid: " + queryPart[fiveIndex].valid + "	query: " + queryPart[fiveIndex].item);
+									System.out.println("-------------------- End --------------------");
+
+									bugTracker++;
+									notOneFalseFlag = false;
+								}								
+							} 
+							catch (Error errorCause) 
+							{
+
+								System.out.println("---------------- Bug Tracked ----------------");
+								System.out.println("Error: " + errorCause);
+								System.out.println("URL: " + url);
+								System.out.println("valid: " + schemePart[oneIndex].valid + "	scheme: " + schemePart[oneIndex].item);
+								System.out.println("valid: " + authorityPart[twoIndex].valid + "	host: " + authorityPart[twoIndex].item);
+								System.out.println("valid: " + portPart[threeIndex].valid + "	port: " + portPart[threeIndex].item);
+								System.out.println("valid: " + pathPart[fourIndex].valid + "	path: " + pathPart[fourIndex].item);
+								System.out.println("valid: " + queryPart[fiveIndex].valid + "	query: " + queryPart[fiveIndex].item);
+								System.out.println("-------------------- End --------------------");
+
+								bugTracker++;
+								notOneFalseFlag = false;
+							}
+						}
+					}
+				}
+			}	
+		}
+
+		if(bugTracker == 0)
+			System.out.println("SUCCESS: No Bugs Found\nTotal Bugs Tracked: " + bugTracker);	
+		else
+			System.out.println("ERRORS FOUND:\nTotal Bugs Tracked: " + bugTracker);
+
+	}
+
+   
 
    public void testManualTest()
    {
