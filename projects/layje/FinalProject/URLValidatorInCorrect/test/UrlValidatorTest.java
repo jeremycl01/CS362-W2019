@@ -264,7 +264,7 @@ public class UrlValidatorTest extends TestCase {
 	   	                + UrlValidator.NO_FRAGMENTS;
 	   	 }
 	   	 
-	   	 int numTests = 5000;
+	   	 int numTests = 50000;
 		 
 		 UrlValidator urlVal = new UrlValidator(null, null, options);
 		 assertTrue(urlVal.isValid("http://www.google.com"));
@@ -345,6 +345,8 @@ public class UrlValidatorTest extends TestCase {
 	    	 }
 	    	 
 	     }
+	     
+	     
 	     
 	     System.out.println("TOTAL FAILURES: " + Integer.toString(failures) + "\n");
    }
