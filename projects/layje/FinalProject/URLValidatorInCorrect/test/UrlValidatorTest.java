@@ -425,7 +425,7 @@ public class UrlValidatorTest extends TestCase {
 			   
 			   for (int i = 0; i < 4; i++) {
 				   
-				   int val = rand.nextInt(100) + 1;
+				   int val = rand.nextInt(254) + 1;
 				   
 				   Integer.toString(val);
 				   
@@ -461,17 +461,35 @@ public class UrlValidatorTest extends TestCase {
 		   }
 		   //random invalid nums 
 		   else {
-			   int dotCount = 0;
-			   String alpha = ".0123456789";
 			   
-			   while (dotCount < 4) {
-				   char choice = alpha.charAt(rand.nextInt(alpha.length()));
+			   if (rand.nextInt(2) == 1) {
+				   //invalid format
+				   int dotCount = 0;
+				   String alpha = ".0123456789";
 				   
-				   authBuffer.append(choice);
-				   
-				   if (choice == '.') {
-					   dotCount++;
+				   while (dotCount < 4) {
+					   char choice = alpha.charAt(rand.nextInt(alpha.length()));
+					   
+					   authBuffer.append(choice);
+					   
+					   if (choice == '.') {
+						   dotCount++;
+					   }
 				   }
+			   }
+			   else {
+				   for (int i = 0; i < 4; i++) {
+					   
+					   int val = rand.nextInt(1000) + 255;
+					   
+					   Integer.toString(val);
+					   
+					   authBuffer.append(val);
+					   
+					   if (i < 3) {
+						   authBuffer.append(".");
+					   }
+				   }  
 			   }
 		   }
 		   
@@ -564,6 +582,10 @@ public class UrlValidatorTest extends TestCase {
 				   
 				   for (int j = 0; j < segLen; j++) {
 					   char choice = alpha.charAt(rand.nextInt(alpha.length()));
+					   
+					   while (choice == '.' && i == 0) {
+						   choice = alpha.charAt(rand.nextInt(alpha.length()));
+					   }
 					   
 					   pathBuffer.append(choice);
 				   }
