@@ -242,7 +242,71 @@ public class UrlValidatorTest extends TestCase {
 
    public void testManualTest()
    {
-//You can use this function to implement your manual testing	   
+	   //testing with "Allow All Schemes"
+	   ResultPair manTestUrls[] = { new ResultPair ("www.google.com", false), 
+			                 new ResultPair ("", false), 
+			                 new ResultPair ("http://www.google.com", true),
+			                 new ResultPair ("http://67.60.36.48", true),
+			                 new ResultPair ("http://2.318542905549.7723402202380.8.", false),
+			                 new ResultPair ("https://www.google.com", true), 
+			                 new ResultPair ("ftp://www.google.com", true), 
+			                 new ResultPair ("httphttpsftp://www.google.com", true), 
+			                 new ResultPair ("ftpp://www.google.com", true),
+			                 new ResultPair ("htt://www.google.com", true), 
+			                 new ResultPair ("httphttpsftp://www.google.com", true),
+			                 new ResultPair ("ftpp://www.google.com", true), 
+			                 new ResultPair ("htt://www.google.com", true), 
+			                 new ResultPair ("http://google.com", true),
+			                 new ResultPair ("http://www.google", false),
+			                 new ResultPair ("http://www.google.com:8080", true),
+			                 new ResultPair ("http://www.google.com:65535", true),
+			                 new ResultPair ("http://www.google.com:65536", false),
+			                 new ResultPair ("http://www.google.com:0", true),
+			                 new ResultPair ("http://www.google.com:-1", false),
+			                 new ResultPair ("http://www.google.com:8A124", false),
+			                 new ResultPair ("https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.1.0/com.ibm.cics.ts.internet.doc/topics/dfhtl_uricomp.html", true),
+			                 new ResultPair ("https://oregonstate.instructure.com/courses/1706563/testesthello", true),
+			                 new ResultPair ("https://www.ibm.com/../support/knowledgecenter/en/SSGMCP_5.1.0/com.ibm.cics.ts.internet.doc/topics/dfhtl_uricomp.html", false),
+			                 new ResultPair ("https://www.ibm.com/support//knowledgecenter/en/SSGMCP_5.1.0/com.ibm.cics.ts.internet.doc/topics/dfhtl_uricomp.html", false),
+			                 new ResultPair ("http://www.AleafelkjEKJfd.au", true),
+			                 new ResultPair ("http://www.AleafelkjEKJfd.club", true),
+			                 new ResultPair ("http://www.AleafelkjEKJfd.alex", false),
+			                 new ResultPair ("https://www.ibm.com/support#knowledgece", true)
+			                 };
+	   
+	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	   
+	   for (int i = 0; i < manTestUrls.length; i++) {
+		   
+		   boolean result = urlVal.isValid(manTestUrls[i].item);
+	    	 
+	    	 if (result != manTestUrls[i].valid) {
+	    
+	    		 printTestFail(manTestUrls[i].item, manTestUrls[i].valid, result);
+	    	 }
+	   }
+	   
+	   long options =
+  	            UrlValidator.ALLOW_2_SLASHES
+	                + UrlValidator.ALLOW_ALL_SCHEMES
+	                + UrlValidator.NO_FRAGMENTS;
+	   
+	   urlVal = new UrlValidator(null, null, options);
+	   
+	   ResultPair manOpTestUrls[] = {
+			   new ResultPair ("https://www.ibm.com/support//knowledgecenter/en/SSGMCP_5.1.0/com.ibm.cics.ts.internet.doc/topics/dfhtl_uricomp.html", true),
+			   new ResultPair ("https://www.ibm.com/support#knowledgece", false)
+	   };
+	   
+	   for (int i = 0; i < manOpTestUrls.length; i++) {
+		   
+		   boolean result = urlVal.isValid(manOpTestUrls[i].item);
+	    	 
+	    	 if (result != manOpTestUrls[i].valid) {
+	    
+	    		 printTestFail(manOpTestUrls[i].item, manOpTestUrls[i].valid, result);
+	    	 }
+	   }
 	   
    }
    
